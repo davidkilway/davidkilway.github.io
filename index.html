@@ -9,10 +9,7 @@
     --bg: #F5F4F0;
     --surface: #EDECEA;
     --ink: #1C1C1A;
-    --ink-soft: #5A5A56;
-    --ink-muted: #9A9A94;
-    --rule: rgba(28,28,26,0.12);
-    --accent: #2A5C8F;
+    --rule: #1C1C1A;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,30 +24,21 @@
     min-height: 100vh;
   }
 
-  /* Spectrum bar */
   .spectrum {
     height: 5px;
     width: 100%;
     background: linear-gradient(90deg,
-      #7B4BA8 0%,
-      #4169B8 18%,
-      #2E9ECC 34%,
-      #3BAF72 50%,
-      #C8C030 66%,
-      #E08030 82%,
-      #C04040 100%
+      #7B4BA8 0%, #4169B8 18%, #2E9ECC 34%,
+      #3BAF72 50%, #C8C030 66%, #E08030 82%, #C04040 100%
     );
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     z-index: 100;
   }
 
   nav {
     position: fixed;
-    top: 5px;
-    left: 0;
-    right: 0;
+    top: 5px; left: 0; right: 0;
     z-index: 99;
     background: var(--bg);
     border-bottom: 1px solid var(--rule);
@@ -67,7 +55,6 @@
     font-weight: normal;
     color: var(--ink);
     text-decoration: none;
-    letter-spacing: 0.01em;
   }
 
   .nav-links {
@@ -79,7 +66,7 @@
   .nav-links a {
     font-family: Georgia, serif;
     font-size: 14px;
-    color: var(--ink-soft);
+    color: var(--ink);
     text-decoration: none;
     position: relative;
     padding-bottom: 2px;
@@ -88,17 +75,13 @@
   .nav-links a::after {
     content: "";
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 1px;
+    bottom: 0; left: 0;
+    width: 0; height: 1px;
     background: var(--ink);
     transition: width 0.25s ease;
   }
 
-  .nav-links a:hover { color: var(--ink); }
   .nav-links a:hover::after { width: 100%; }
-  .nav-links a.active { color: var(--ink); }
   .nav-links a.active::after { width: 100%; }
 
   .wrap {
@@ -107,19 +90,9 @@
     padding: 0 32px;
   }
 
-  /* Hero */
   .hero {
     padding: 140px 0 80px;
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .hero-label {
-    font-family: "Courier New", monospace;
-    font-size: 12px;
-    color: var(--ink-muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 20px;
+    border-bottom: 2px solid var(--rule);
   }
 
   h1 {
@@ -128,27 +101,28 @@
     font-weight: normal;
     letter-spacing: -0.02em;
     margin-bottom: 24px;
+    color: var(--ink);
   }
 
   .hero-bio {
     font-size: 18px;
-    color: var(--ink-soft);
+    color: var(--ink);
     max-width: 52ch;
     line-height: 1.65;
   }
 
-  /* About section */
   .about-section {
     padding: 64px 0;
-    border-bottom: 1px solid var(--rule);
+    border-bottom: 2px solid var(--rule);
   }
 
   .section-label {
     font-family: "Courier New", monospace;
-    font-size: 11px;
+    font-size: 13px;
+    font-weight: bold;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--ink-muted);
+    color: var(--ink);
     margin-bottom: 28px;
   }
 
@@ -160,7 +134,7 @@
   }
 
   .about-text p {
-    color: var(--ink-soft);
+    color: var(--ink);
     margin-bottom: 16px;
     font-size: 16px;
   }
@@ -174,57 +148,38 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--ink-muted);
+    color: var(--ink);
     font-family: "Courier New", monospace;
     font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  /* Skills strip */
   .skills-section {
     padding: 64px 0;
   }
 
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    margin-top: 28px;
-  }
-
-  .skill-block {
-    background: var(--surface);
-    padding: 20px 22px;
-  }
-
-  .skill-block-label {
-    font-family: "Courier New", monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    margin-bottom: 10px;
-  }
-
-  .skill-block ul {
+  .skills-list {
     list-style: none;
-    padding: 0;
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
-  .skill-block li {
-    font-size: 14px;
-    color: var(--ink-soft);
-    padding: 3px 0;
+  .skills-list li {
+    font-size: 16px;
+    color: var(--ink);
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(28,28,26,0.15);
   }
 
-  .skill-block li::before {
-    content: "– ";
-    color: var(--ink-muted);
+  .skills-list li:last-child {
+    border-bottom: none;
   }
 
   footer {
-    border-top: 1px solid var(--rule);
+    border-top: 2px solid var(--rule);
     padding: 28px 0;
     display: flex;
     justify-content: space-between;
@@ -234,26 +189,25 @@
   .footer-note {
     font-family: "Courier New", monospace;
     font-size: 11px;
-    color: var(--ink-muted);
+    color: var(--ink);
     letter-spacing: 0.05em;
   }
 
   .footer-link {
     font-family: "Courier New", monospace;
     font-size: 11px;
-    color: var(--ink-muted);
+    color: var(--ink);
     text-decoration: none;
     letter-spacing: 0.05em;
   }
 
-  .footer-link:hover { color: var(--ink); }
+  .footer-link:hover { text-decoration: underline; }
 
   @media (max-width: 600px) {
     nav { padding: 0 20px; }
     .wrap { padding: 0 20px; }
     .hero { padding: 120px 0 56px; }
     .about-grid { grid-template-columns: 1fr; gap: 32px; }
-    .skills-grid { grid-template-columns: 1fr 1fr; }
     .photo-placeholder { aspect-ratio: 4/3; }
     footer { flex-direction: column; gap: 12px; text-align: center; }
   }
@@ -275,11 +229,9 @@
 <div class="wrap">
 
   <section class="hero">
-    <div class="hero-label">Vancouver, WA</div>
     <h1>David Kilway</h1>
     <p class="hero-bio">
-      I'm a student with a background across physics, biology, and instrumentation —
-      currently building things at the intersection of optics and life sciences.
+      I'm a rising junior at the University of Rochester studying Optical Engineering.
       This site is a running record of what I'm working on.
     </p>
   </section>
@@ -289,20 +241,16 @@
     <div class="about-grid">
       <div class="about-text">
         <p>
-          I study at the crossroads of physics, biology, and engineering —
-          not because I couldn't pick one, but because the most interesting
-          problems tend to sit between disciplines.
+          My first real exposure to optics was through my dad's old med school microscopes.
+          As a kid, I spent hours looking at whatever I could find and would culture
+          paramecium, hunt for tardigrades, and look for rotifers in bird bath water.
+          Around the same time, my brother got really into astronomy which pulled me in
+          that direction as well. Optics ended up being the subject connecting both.
         </p>
         <p>
-          Right now I'm focused on low-cost optical instruments: things that
-          can do real science without requiring a fully equipped lab. I'm
-          interested in what happens when you bring that kind of tooling
-          into biological contexts.
-        </p>
-        <p>
-          I work mostly in Python and CAD, and I'm comfortable at a lab bench.
-          I build things to understand them, and I document the parts that
-          didn't work as much as the parts that did.
+          I initially came to Rochester as a Biomedical Engineering major, but switched
+          to Optical Engineering after meeting people in the department. The people and
+          the work pulled me in immediately and I haven't looked back since.
         </p>
       </div>
       <div class="photo-placeholder">Photo coming soon</div>
@@ -311,47 +259,18 @@
 
   <section class="skills-section">
     <div class="section-label">Skills &amp; Tools</div>
-    <div class="skills-grid">
-      <div class="skill-block">
-        <div class="skill-block-label">Languages</div>
-        <ul>
-          <li>Python</li>
-        </ul>
-      </div>
-      <div class="skill-block">
-        <div class="skill-block-label">Design &amp; CAD</div>
-        <ul>
-          <li>CAD (Fusion / SolidWorks)</li>
-        </ul>
-      </div>
-      <div class="skill-block">
-        <div class="skill-block-label">Lab</div>
-        <ul>
-          <li>Bench skills</li>
-          <li>Optical alignment</li>
-        </ul>
-      </div>
-      <div class="skill-block">
-        <div class="skill-block-label">Disciplines</div>
-        <ul>
-          <li>Optics / photonics</li>
-          <li>Biology</li>
-          <li>Instrumentation</li>
-        </ul>
-      </div>
-      <div class="skill-block">
-        <div class="skill-block-label">Currently learning</div>
-        <ul>
-          <li>Spectroscopy</li>
-          <li>Biophotonics</li>
-        </ul>
-      </div>
-    </div>
+    <ul class="skills-list">
+      <li>Python</li>
+      <li>MATLAB</li>
+      <li>CAD</li>
+      <li>Raspberry Pi</li>
+      <li>Bench skills</li>
+    </ul>
   </section>
 
   <footer>
     <span class="footer-note">davidkilway.github.io</span>
-    <a href="projects.html" class="footer-link">See projects →</a>
+    <a href="projects.html" class="footer-link">See projects</a>
   </footer>
 
 </div>
