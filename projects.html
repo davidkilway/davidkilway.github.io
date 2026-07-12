@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — David Kilway</title>
+<style>
+  :root {
+    --bg: #F5F4F0;
+    --surface: #EDECEA;
+    --surface-2: #E5E4E0;
+    --ink: #1C1C1A;
+    --ink-soft: #5A5A56;
+    --ink-muted: #9A9A94;
+    --rule: rgba(28,28,26,0.12);
+    --tag-build: #2A5C8F;
+    --tag-build-bg: #E8F0F8;
+    --tag-test: #3B7A57;
+    --tag-test-bg: #E6F3EC;
+    --tag-design: #7A4A9A;
+    --tag-design-bg: #F2EBF8;
+    --tag-research: #8A6020;
+    --tag-research-bg: #F8F2E6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Georgia", serif;
+    font-size: 17px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .spectrum {
+    height: 5px;
+    width: 100%;
+    background: linear-gradient(90deg,
+      #7B4BA8 0%, #4169B8 18%, #2E9ECC 34%,
+      #3BAF72 50%, #C8C030 66%, #E08030 82%, #C04040 100%
+    );
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 100;
+  }
+
+  nav {
+    position: fixed;
+    top: 5px; left: 0; right: 0;
+    z-index: 99;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 40px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-name {
+    font-family: "Georgia", serif;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: Georgia, serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 2px;
+  }
+
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 1px;
+    background: var(--ink);
+    transition: width 0.25s ease;
+  }
+
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--ink); }
+  .nav-links a.active::after { width: 100%; }
+
+  /* Page layout */
+  .page {
+    padding-top: 57px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-header {
+    padding: 48px 40px 32px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .page-label {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+
+  .page-title {
+    font-size: 28px;
+    font-weight: normal;
+    letter-spacing: -0.01em;
+  }
+
+  /* Main two-column layout */
+  .projects-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    flex: 1;
+  }
+
+  /* Left: project cards */
+  .projects-sidebar {
+    border-right: 1px solid var(--rule);
+    padding: 24px 0;
+    position: sticky;
+    top: 57px;
+    height: calc(100vh - 57px);
+    overflow-y: auto;
+  }
+
+  .sidebar-section-label {
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    padding: 0 24px 12px;
+  }
+
+  .project-card {
+    padding: 16px 24px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    text-decoration: none;
+    display: block;
+  }
+
+  .project-card:hover {
+    background: var(--surface);
+  }
+
+  .project-card.active {
+    border-left-color: var(--ink);
+    background: var(--surface);
+  }
+
+  .project-card-photo {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: var(--surface-2);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-muted);
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .project-card-title {
+    font-size: 15px;
+    color: var(--ink);
+    font-family: Georgia, serif;
+    margin-bottom: 4px;
+  }
+
+  .project-card-meta {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  .status-dot.in-progress { background: #C8A020; }
+  .status-dot.complete { background: #3B7A57; }
+  .status-dot.planned { background: var(--ink-muted); }
+
+  /* Empty state for sidebar */
+  .sidebar-empty {
+    padding: 24px;
+    color: var(--ink-muted);
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  /* Right: feed */
+  .projects-feed {
+    padding: 32px 40px;
+    max-width: 640px;
+  }
+
+  .feed-header {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .feed-title {
+    font-size: 22px;
+    font-weight: normal;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+
+  .feed-desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    max-width: 48ch;
+  }
+
+  /* Log entries */
+  .log-entry {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .log-entry:last-child {
+    border-bottom: none;
+  }
+
+  .log-date {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    padding-top: 3px;
+    flex-shrink: 0;
+  }
+
+  .log-body {}
+
+  .log-tag {
+    display: inline-block;
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 2px;
+    margin-bottom: 7px;
+  }
+
+  .log-tag.build { background: var(--tag-build-bg); color: var(--tag-build); }
+  .log-tag.test { background: var(--tag-test-bg); color: var(--tag-test); }
+  .log-tag.design { background: var(--tag-design-bg); color: var(--tag-design); }
+  .log-tag.research { background: var(--tag-research-bg); color: var(--tag-research); }
+
+  .log-text {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  /* Empty feed state */
+  .feed-empty {
+    padding: 48px 0;
+    color: var(--ink-muted);
+  }
+
+  .feed-empty-title {
+    font-size: 16px;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+
+  .feed-empty-sub {
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  /* No project selected state */
+  .feed-placeholder {
+    padding: 64px 0;
+    color: var(--ink-muted);
+  }
+
+  .feed-placeholder p {
+    font-size: 15px;
+    font-style: italic;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-note {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 700px) {
+    nav { padding: 0 20px; }
+    .page-header { padding: 40px 20px 24px; }
+    .projects-layout { grid-template-columns: 1fr; }
+    .projects-sidebar {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--rule);
+    }
+    .projects-feed { padding: 24px 20px; }
+    footer { padding: 24px 20px; flex-direction: column; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="spectrum"></div>
+
+<nav>
+  <a href="index.html" class="nav-name">David Kilway</a>
+  <ul class="nav-links">
+    <li><a href="index.html">About</a></li>
+    <li><a href="projects.html" class="active">Projects</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+
+  <div class="page-header">
+    <div class="page-label">Work</div>
+    <h1 class="page-title">Projects</h1>
+  </div>
+
+  <div class="projects-layout">
+
+    <!-- Left: project cards -->
+    <aside class="projects-sidebar">
+      <div class="sidebar-section-label">All projects</div>
+
+      <!--
+        ADD PROJECTS HERE — copy this block for each new project:
+
+        <a href="#project-slug" class="project-card" onclick="selectProject('project-slug')">
+          <div class="project-card-photo">Photo</div>
+          <div class="project-card-title">Project name</div>
+          <div class="project-card-meta">
+            <span class="status-dot in-progress"></span>
+            In progress
+          </div>
+        </a>
+
+        Status dot options:
+          in-progress — amber dot
+          complete    — green dot
+          planned     — gray dot
+      -->
+
+      <div class="sidebar-empty">No projects yet — check back soon.</div>
+
+    </aside>
+
+    <!-- Right: feed -->
+    <main class="projects-feed">
+
+      <div class="feed-placeholder">
+        <p>Select a project to see its build log.</p>
+      </div>
+
+      <!--
+        ADD PROJECT FEEDS HERE — one per project, hidden by default:
+
+        <div id="feed-project-slug" class="feed-content" style="display:none;">
+          <div class="feed-header">
+            <div class="feed-title">Project Name</div>
+            <div class="feed-desc">One sentence description of what this project is and why.</div>
+          </div>
+
+          <div class="log-entry">
+            <div class="log-date">Jul 2026</div>
+            <div class="log-body">
+              <span class="log-tag build">Build</span>
+              <div class="log-text">What you did, what happened, what you learned.</div>
+            </div>
+          </div>
+
+        </div>
+
+        Tag options: build · test · design · research
+      -->
+
+    </main>
+
+  </div>
+
+  <footer>
+    <span class="footer-note">davidkilway.github.io</span>
+    <span class="footer-note">Updated as projects progress</span>
+  </footer>
+
+</div>
+
+<script>
+  function selectProject(slug) {
+    document.querySelectorAll('.project-card').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.feed-content').forEach(f => f.style.display = 'none');
+    document.querySelector('.feed-placeholder').style.display = 'none';
+
+    const card = document.querySelector('[href="#' + slug + '"]');
+    const feed = document.getElementById('feed-' + slug);
+
+    if (card) card.classList.add('active');
+    if (feed) feed.style.display = 'block';
+  }
+</script>
+
+</body>
+</html>

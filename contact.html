@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — David Kilway</title>
+<style>
+  :root {
+    --bg: #F5F4F0;
+    --surface: #EDECEA;
+    --ink: #1C1C1A;
+    --ink-soft: #5A5A56;
+    --ink-muted: #9A9A94;
+    --rule: rgba(28,28,26,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Georgia", serif;
+    font-size: 17px;
+    line-height: 1.7;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .spectrum {
+    height: 5px;
+    width: 100%;
+    background: linear-gradient(90deg,
+      #7B4BA8 0%, #4169B8 18%, #2E9ECC 34%,
+      #3BAF72 50%, #C8C030 66%, #E08030 82%, #C04040 100%
+    );
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 100;
+  }
+
+  nav {
+    position: fixed;
+    top: 5px; left: 0; right: 0;
+    z-index: 99;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 40px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-name {
+    font-family: "Georgia", serif;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: Georgia, serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 2px;
+  }
+
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 1px;
+    background: var(--ink);
+    transition: width 0.25s ease;
+  }
+
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--ink); }
+  .nav-links a.active::after { width: 100%; }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 32px;
+    flex: 1;
+  }
+
+  .contact-section {
+    padding: 120px 0 80px;
+  }
+
+  .page-label {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: clamp(32px, 5vw, 44px);
+    font-weight: normal;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+
+  .contact-intro {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 50ch;
+    margin-bottom: 56px;
+  }
+
+  /* Contact rows */
+  .contact-list {
+    list-style: none;
+  }
+
+  .contact-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    align-items: baseline;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .contact-item:first-child {
+    border-top: 1px solid var(--rule);
+  }
+
+  .contact-platform {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .contact-value {
+    font-size: 16px;
+    color: var(--ink);
+  }
+
+  .contact-value a {
+    color: var(--ink);
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 1px;
+  }
+
+  .contact-value a::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 1px;
+    background: var(--ink);
+    transition: width 0.2s ease;
+  }
+
+  .contact-value a:hover::after { width: 100%; }
+
+  .contact-note {
+    margin-top: 52px;
+    padding-top: 32px;
+    border-top: 1px solid var(--rule);
+    font-size: 15px;
+    color: var(--ink-muted);
+    font-style: italic;
+    max-width: 48ch;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .footer-note {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 600px) {
+    nav { padding: 0 20px; }
+    .wrap { padding: 0 20px; }
+    .contact-section { padding: 100px 0 56px; }
+    .contact-item { grid-template-columns: 90px 1fr; gap: 12px; }
+    footer { padding: 24px 20px; flex-direction: column; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="spectrum"></div>
+
+<nav>
+  <a href="index.html" class="nav-name">David Kilway</a>
+  <ul class="nav-links">
+    <li><a href="index.html">About</a></li>
+    <li><a href="projects.html">Projects</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="wrap">
+  <section class="contact-section">
+
+    <div class="page-label">Get in touch</div>
+    <h1>Contact</h1>
+    <p class="contact-intro">
+      Happy to hear from anyone interested in the work — whether that's a
+      question about a project, a collaboration, or just a conversation.
+    </p>
+
+    <ul class="contact-list">
+
+      <li class="contact-item">
+        <span class="contact-platform">Email</span>
+        <span class="contact-value">
+          <a href="mailto:david.kilway@gmail.com">david.kilway@gmail.com</a>
+        </span>
+      </li>
+
+      <li class="contact-item">
+        <span class="contact-platform">GitHub</span>
+        <span class="contact-value">
+          <a href="https://github.com/davidkilway" target="_blank" rel="noopener">github.com/davidkilway</a>
+        </span>
+      </li>
+
+      <li class="contact-item">
+        <span class="contact-platform">LinkedIn</span>
+        <span class="contact-value">
+          <a href="https://www.linkedin.com/in/david-kilway-801a9b2a8/" target="_blank" rel="noopener">linkedin.com/in/david-kilway</a>
+        </span>
+      </li>
+
+      <li class="contact-item">
+        <span class="contact-platform">Hackaday</span>
+        <span class="contact-value">
+          <!-- Add once you've made a Hackaday.io account -->
+          <span style="color: var(--ink-muted); font-style: italic; font-size: 14px;">Coming soon</span>
+        </span>
+      </li>
+
+    </ul>
+
+    <p class="contact-note">
+      I try to respond within a few days. If it's time-sensitive, say so in the subject line.
+    </p>
+
+  </section>
+</div>
+
+<footer>
+  <span class="footer-note">davidkilway.github.io</span>
+  <span class="footer-note">Vancouver, WA</span>
+</footer>
+
+</body>
+</html>
