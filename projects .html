@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — David Kilway</title>
+<style>
+  :root {
+    --bg: #F5F4F0;
+    --surface: #EDECEA;
+    --surface-2: #E5E4E0;
+    --ink: #1C1C1A;
+    --ink-soft: rgba(28,28,26,0.6);
+    --rule: #1C1C1A;
+    --rule-soft: rgba(28,28,26,0.12);
+    --tag-instrumentation: #2A5C8F;
+    --tag-instrumentation-bg: #E8F0F8;
+    --tag-hardware: #1C1C1A;
+    --tag-hardware-bg: #E5E4E0;
+    --tag-imaging: #8A6020;
+    --tag-imaging-bg: #F8F2E6;
+    --status-complete: #3B7A57;
+    --status-progress: #C8A020;
+    --status-planned: #9A9A94;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Georgia", serif;
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .spectrum {
+    height: 5px;
+    width: 100%;
+    background: linear-gradient(90deg,
+      #7B4BA8 0%, #4169B8 18%, #2E9ECC 34%,
+      #3BAF72 50%, #C8C030 66%, #E08030 82%, #C04040 100%
+    );
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 100;
+  }
+
+  nav {
+    position: fixed;
+    top: 5px; left: 0; right: 0;
+    z-index: 99;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 40px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-name {
+    font-family: "Georgia", serif;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    color: var(--ink);
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 2px;
+  }
+
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 1px;
+    background: var(--ink);
+    transition: width 0.25s ease;
+  }
+
+  .nav-links a:hover::after,
+  .nav-links a.active::after { width: 100%; }
+
+  .page {
+    padding-top: 57px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-header {
+    padding: 40px 40px 28px;
+    border-bottom: 2px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .page-title {
+    font-size: 26px;
+    font-weight: normal;
+    letter-spacing: -0.01em;
+  }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .search-input {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    background: var(--surface);
+    border: 1px solid var(--rule-soft);
+    color: var(--ink);
+    padding: 6px 12px;
+    outline: none;
+    width: 180px;
+    letter-spacing: 0.03em;
+  }
+
+  .search-input::placeholder { color: var(--ink-soft); }
+  .search-input:focus { border-color: var(--ink); }
+
+  .sort-select {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    background: var(--surface);
+    border: 1px solid var(--rule-soft);
+    color: var(--ink);
+    padding: 6px 10px;
+    outline: none;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+  }
+
+  .tag-filters {
+    padding: 14px 40px;
+    border-bottom: 1px solid var(--rule-soft);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-right: 4px;
+  }
+
+  .filter-tag {
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border: 1px solid var(--rule-soft);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-radius: 2px;
+  }
+
+  .filter-tag:hover { border-color: var(--ink); color: var(--ink); }
+  .filter-tag.active-filter {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .projects-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* LEFT feed */
+  .updates-feed {
+    border-right: 2px solid var(--rule);
+    position: sticky;
+    top: 57px;
+    height: calc(100vh - 57px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .feed-label {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--rule-soft);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 1;
+  }
+
+  .update-entry {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .update-entry:last-child { border-bottom: none; }
+
+  .update-date {
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+
+  .update-project-tag {
+    display: inline-block;
+    font-family: "Courier New", monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 1px 6px;
+    border-radius: 2px;
+    margin-bottom: 5px;
+  }
+
+  .update-text {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  /* RIGHT grid */
+  .projects-main {
+    padding: 32px 40px;
+    overflow-y: auto;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--rule-soft);
+    text-decoration: none;
+    display: block;
+    transition: border-color 0.15s ease;
+  }
+
+  .project-card:hover { border-color: var(--ink); }
+
+  .card-photo {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-soft);
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    overflow: hidden;
+  }
+
+  .card-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .card-body { padding: 16px 18px 18px; }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-family: Georgia, serif;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .status-dot.complete { background: var(--status-complete); }
+  .status-dot.in-progress { background: var(--status-progress); }
+  .status-dot.planned { background: var(--status-planned); }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .tag {
+    font-family: "Courier New", monospace;
+    font-size: 9px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  .tag.instrumentation { background: var(--tag-instrumentation-bg); color: var(--tag-instrumentation); }
+  .tag.hardware { background: var(--tag-hardware-bg); color: var(--tag-hardware); }
+  .tag.imaging { background: var(--tag-imaging-bg); color: var(--tag-imaging); }
+
+  .card-date {
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .no-results {
+    grid-column: 1 / -1;
+    padding: 48px 0;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  footer {
+    border-top: 2px solid var(--rule);
+    padding: 22px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-note {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .page-header { padding: 32px 20px 20px; }
+    .tag-filters { padding: 12px 20px; }
+    .projects-layout { grid-template-columns: 1fr; }
+    .updates-feed {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 2px solid var(--rule);
+      max-height: 260px;
+    }
+    .projects-main { padding: 24px 20px; }
+    footer { padding: 20px; flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="spectrum"></div>
+
+<nav>
+  <a href="index.html" class="nav-name">David Kilway</a>
+  <ul class="nav-links">
+    <li><a href="index.html">About</a></li>
+    <li><a href="projects.html" class="active">Projects</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1 class="page-title">Projects</h1>
+    <div class="controls">
+      <input class="search-input" type="text" id="searchInput" placeholder="Search projects..." oninput="filterProjects()">
+      <select class="sort-select" id="sortSelect" onchange="filterProjects()">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="status">By status</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="tag-filters" id="tagFilters">
+    <span class="filter-label">Filter</span>
+    <button class="filter-tag" onclick="toggleFilter('instrumentation')">Instrumentation</button>
+    <button class="filter-tag" onclick="toggleFilter('hardware')">Hardware</button>
+    <button class="filter-tag" onclick="toggleFilter('imaging')">Imaging</button>
+  </div>
+
+  <div class="projects-layout">
+
+    <aside class="updates-feed">
+      <div class="feed-label">Recent Updates</div>
+
+      <div class="update-entry">
+        <div class="update-date">Aug 2026</div>
+        <span class="update-project-tag tag instrumentation">ZS8 Repair</span>
+        <div class="update-text">Camera fully repaired. Flat field imaging confirmed sensor contamination resolved.</div>
+      </div>
+
+      <div class="update-entry">
+        <div class="update-date">Aug 2026</div>
+        <span class="update-project-tag tag instrumentation">ZS8 Repair</span>
+        <div class="update-text">Disassembled to sensor level, cleaned, and diagnosed post-reassembly ribbon cable fault.</div>
+      </div>
+
+    </aside>
+
+    <main class="projects-main">
+      <div class="projects-grid" id="projectsGrid">
+
+        <a class="project-card"
+           href="projects/zs8-repair.html"
+           data-tags="instrumentation hardware imaging"
+           data-date="202608"
+           data-status="complete">
+          <div class="card-photo">Add photo</div>
+          <div class="card-body">
+            <div class="card-header">
+              <div class="card-title">Panasonic ZS8 Sensor Cleaning and Fault Diagnosis</div>
+              <span class="status-dot complete"></span>
+            </div>
+            <div class="card-desc">Disassembled a compact camera to sensor level, characterized contamination via flat field imaging, cleaned the sensor, and diagnosed a ribbon cable fault.</div>
+            <div class="card-footer">
+              <div class="card-tags">
+                <span class="tag instrumentation">Instrumentation</span>
+                <span class="tag hardware">Hardware</span>
+                <span class="tag imaging">Imaging</span>
+              </div>
+              <div class="card-date">Aug 2026</div>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </main>
+
+  </div>
+
+  <footer>
+    <span class="footer-note">davidkilway.github.io</span>
+    <span class="footer-note">Updated as projects progress</span>
+  </footer>
+
+</div>
+
+<script>
+  let activeFilters = new Set();
+
+  function toggleFilter(tag) {
+    const btn = document.querySelector(`.filter-tag[onclick="toggleFilter('${tag}')"]`);
+    if (activeFilters.has(tag)) {
+      activeFilters.delete(tag);
+      btn.classList.remove('active-filter');
+    } else {
+      activeFilters.add(tag);
+      btn.classList.add('active-filter');
+    }
+    filterProjects();
+  }
+
+  function filterProjects() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const sort = document.getElementById('sortSelect').value;
+    const grid = document.getElementById('projectsGrid');
+    const cards = Array.from(grid.querySelectorAll('.project-card'));
+    const statusOrder = { complete: 0, 'in-progress': 1, planned: 2 };
+
+    cards.forEach(card => {
+      const title = card.querySelector('.card-title').textContent.toLowerCase();
+      const desc = card.querySelector('.card-desc').textContent.toLowerCase();
+      const tags = card.dataset.tags || '';
+      const matchesSearch = !query || title.includes(query) || desc.includes(query);
+      const matchesTags = activeFilters.size === 0 || [...activeFilters].every(f => tags.includes(f));
+      card.style.display = matchesSearch && matchesTags ? 'block' : 'none';
+    });
+
+    const visible = cards.filter(c => c.style.display !== 'none');
+    visible.sort((a, b) => {
+      if (sort === 'newest') return (b.dataset.date || '0').localeCompare(a.dataset.date || '0');
+      if (sort === 'oldest') return (a.dataset.date || '0').localeCompare(b.dataset.date || '0');
+      if (sort === 'status') return (statusOrder[a.dataset.status] || 99) - (statusOrder[b.dataset.status] || 99);
+      return 0;
+    });
+
+    visible.forEach(card => grid.appendChild(card));
+
+    const existing = grid.querySelector('.no-results');
+    if (existing) existing.remove();
+    if (visible.length === 0) {
+      const msg = document.createElement('div');
+      msg.className = 'no-results';
+      msg.textContent = 'No projects match your filters.';
+      grid.appendChild(msg);
+    }
+  }
+</script>
+
+</body>
+</html>
