@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panasonic ZS8 Sensor Cleaning — David Kilway</title>
+<style>
+  :root {
+    --bg: #F5F4F0;
+    --surface: #EDECEA;
+    --surface-2: #E5E4E0;
+    --ink: #1C1C1A;
+    --ink-soft: rgba(28,28,26,0.6);
+    --rule: #1C1C1A;
+    --rule-soft: rgba(28,28,26,0.12);
+    --tag-instrumentation: #2A5C8F;
+    --tag-instrumentation-bg: #E8F0F8;
+    --tag-hardware: #1C1C1A;
+    --tag-hardware-bg: #E5E4E0;
+    --tag-imaging: #8A6020;
+    --tag-imaging-bg: #F8F2E6;
+    --status-complete: #3B7A57;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Georgia", serif;
+    font-size: 17px;
+    line-height: 1.7;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .spectrum {
+    height: 5px;
+    width: 100%;
+    background: linear-gradient(90deg,
+      #7B4BA8 0%, #4169B8 18%, #2E9ECC 34%,
+      #3BAF72 50%, #C8C030 66%, #E08030 82%, #C04040 100%
+    );
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 100;
+  }
+
+  nav {
+    position: fixed;
+    top: 5px; left: 0; right: 0;
+    z-index: 99;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 40px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-name {
+    font-family: "Georgia", serif;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    color: var(--ink);
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 2px;
+  }
+
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 1px;
+    background: var(--ink);
+    transition: width 0.25s ease;
+  }
+
+  .nav-links a:hover::after { width: 100%; }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 32px;
+    flex: 1;
+  }
+
+  .back {
+    padding: 88px 0 28px;
+  }
+
+  .back a {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+
+  .back a:hover { color: var(--ink); }
+
+  .project-header {
+    padding-bottom: 36px;
+    border-bottom: 2px solid var(--rule);
+  }
+
+  .project-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  .tag.instrumentation { background: var(--tag-instrumentation-bg); color: var(--tag-instrumentation); }
+  .tag.hardware { background: var(--tag-hardware-bg); color: var(--tag-hardware); border: 1px solid var(--rule-soft); }
+  .tag.imaging { background: var(--tag-imaging-bg); color: var(--tag-imaging); }
+
+  .status-badge {
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid var(--status-complete);
+    color: var(--status-complete);
+    border-radius: 2px;
+  }
+
+  .meta-date {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-left: auto;
+  }
+
+  .project-title {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: normal;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+
+  .project-summary {
+    font-size: 17px;
+    color: var(--ink);
+    max-width: 60ch;
+    line-height: 1.7;
+  }
+
+  .hero-image {
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    margin: 40px 0 0;
+  }
+
+  .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .section {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .section:last-of-type { border-bottom: none; }
+
+  .section-label {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .section-text {
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.7;
+    max-width: 62ch;
+  }
+
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .comparison-image {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: var(--surface-2);
+    border: 1px solid var(--rule-soft);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-soft);
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .comparison-image img { width: 100%; height: 100%; object-fit: cover; }
+
+  .comparison-caption {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.03em;
+  }
+
+  .log-entry {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .log-entry:last-child { border-bottom: none; }
+
+  .log-date {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+    padding-top: 2px;
+  }
+
+  .log-text {
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  .links-section {
+    padding: 40px 0 64px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .project-link {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-soft);
+    padding-bottom: 2px;
+  }
+
+  .project-link:hover { border-color: var(--ink); }
+
+  footer {
+    border-top: 2px solid var(--rule);
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-note {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-link {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+  }
+
+  .footer-link:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    nav { padding: 0 20px; }
+    .wrap { padding: 0 20px; }
+    .comparison { grid-template-columns: 1fr; }
+    footer { padding: 24px 20px; flex-direction: column; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="spectrum"></div>
+
+<nav>
+  <a href="../index.html" class="nav-name">David Kilway</a>
+  <ul class="nav-links">
+    <li><a href="../index.html">About</a></li>
+    <li><a href="../projects.html">Projects</a></li>
+    <li><a href="../contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="wrap">
+
+  <div class="back">
+    <a href="../projects.html">← Projects</a>
+  </div>
+
+  <div class="project-header">
+    <div class="project-meta">
+      <span class="tag instrumentation">Instrumentation</span>
+      <span class="tag hardware">Hardware</span>
+      <span class="tag imaging">Imaging</span>
+      <span class="status-badge">Complete</span>
+      <span class="meta-date">Aug 2026</span>
+    </div>
+    <h1 class="project-title">Panasonic ZS8 Sensor Cleaning</h1>
+    <p class="project-summary">
+      I wanted to clean my Panasonic point and shoot because it had visible dust spots that
+      showed up in every photo. I disassembled it down to the sensor level, characterized
+      the contamination using flat field imaging before touching anything, and cleared the
+      loose debris with a bike pump. On reassembly the camera was entirely nonfunctional.
+      I suspected a delicate ribbon cable was either damaged or not seated properly.
+      Diagnosing that through systematic elimination taught me more about how compact
+      camera internals work than the cleaning itself did.
+    </p>
+    <div class="hero-image">
+      <img src="zs8overhead.jpeg" alt="Panasonic ZS8 disassembled to sensor level">
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="section">
+    <div class="section-label">Overview</div>
+    <div class="section-text">
+      Stripped down to the sensor, cleaned, and characterized with flat field imaging at f6.3 using a CFML36 CFL bulb.
+    </div>
+  </div>
+
+  <!-- BEFORE AND AFTER -->
+  <div class="section">
+    <div class="section-label">Before and After</div>
+    <div class="comparison">
+      <div>
+        <div class="comparison-image"><img src="zs8before.jpg" alt="Flat field before cleaning showing dust spots"></div>
+        <div class="comparison-caption">Before cleaning</div>
+      </div>
+      <div>
+        <div class="comparison-image"><img src="zs8after.jpg" alt="Flat field after cleaning, spots removed"></div>
+        <div class="comparison-caption">After cleaning</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUILD LOG -->
+  <div class="section">
+    <div class="section-label">Build Log</div>
+
+    <div class="log-entry">
+      <div class="log-date">Aug 2026</div>
+      <div class="log-text">Shot a flat field image at f6.3 against a CFML36 CFL bulb to figure out where the dust was sitting before opening anything. Spots stayed fixed across zoom levels which meant they were on the sensor plane and not inside the lens. Looked up the ZS8 before touching a single screw and found it uses JIS screws throughout. Important distinction since Phillips drivers would have stripped them.</div>
+    </div>
+
+    <div class="log-entry">
+      <div class="log-date">Aug 2026</div>
+      <div class="log-text">Opened it up using a PH00 screwdriver and a 1.5mm flat head to release the ribbon cable clips. Got down to the sensor level and disconnected two ribbon cables, the LCD and the main board connection. Photographed both connectors before touching them. Cleared the loose debris off the sensor with a bike pump. Put it back together.</div>
+    </div>
+
+    <div class="log-entry">
+      <div class="log-date">Aug 2026</div>
+      <div class="log-text">Powered on and the screen was completely dead and the lens was only partially initializing. Pulled the sensor out entirely and tested again and got the same behavior, which took the sensor out of the equation. Went back in and reseated every ribbon cable carefully. The LCD ribbon had not been fully locked down the first time around. Camera came back fully on the next power on. Shot another flat field and the spots were gone.</div>
+    </div>
+
+  </div>
+
+  <div class="links-section">
+    <!-- <a href="https://github.com/davidkilway" class="project-link">GitHub →</a> -->
+  </div>
+
+</div>
+
+<footer>
+  <span class="footer-note">davidkilway.github.io</span>
+  <a href="../projects.html" class="footer-link">All projects</a>
+</footer>
+
+</body>
+</html>
