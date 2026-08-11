@@ -1,0 +1,26 @@
+{
+  "updates": [
+    {
+      "date": "Aug 2026",
+      "project": "ZS8 Repair",
+      "text": "Camera fully repaired. Flat field imaging confirmed sensor contamination resolved."
+    },
+    {
+      "date": "Aug 2026",
+      "project": "ZS8 Repair",
+      "text": "Disassembled to sensor level, cleaned, and diagnosed post-reassembly ribbon cable fault."
+    }
+  ],
+  "projects": [
+    {
+      "title": "Panasonic ZS8 Sensor Cleaning",
+      "description": "Disassembled a compact camera to sensor level, characterized contamination via flat field imaging, cleaned the sensor, and diagnosed a ribbon cable fault.",
+      "tags": ["instrumentation", "hardware", "imaging"],
+      "status": "complete",
+      "date": "Aug 2026",
+      "date_sort": "202608",
+      "photo": "projects/zs8overhead.jpeg",
+      "url": "projects/zs8-repair.html"
+    }
+  ]
+}
